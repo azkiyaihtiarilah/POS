@@ -24,16 +24,18 @@ class UserController extends Controller
         // ];
         // UserModel::insert($data); // tambahkan data ke table m_user
 
-        $data = [
-            'level_id' => '2',
-            'username' => 'manager_tiga',
-            'nama' => 'Manager 3',
-            'password' => Hash::make('12345')
-        ];
-        UserModel::create($data);
+        // $data = [
+        //     'level_id' => '2',
+        //     'username' => 'manager_tiga',
+        //     'nama' => 'Manager 3',
+        //     'password' => Hash::make('12345')
+        // ];
+        // UserModel::create($data);
 
         //coba akses model UserModel
-        $user = UserModel::all(); // ambil data semua data dari tabel m_user
+        $user = UserModel::findOr(2,['username', 'nama'], function(){
+            abort(404);
+        }); 
         return view('user', ['data' => $user]);
     }
 }
