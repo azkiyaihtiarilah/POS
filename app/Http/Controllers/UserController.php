@@ -111,13 +111,33 @@ class UserController extends Controller
         return redirect('/user');
     }
 
+    
+
+    // public function ubah($id){
+    //     $user = UserModel::find($id);
+    //     return view('user_ubah', ['data' => $user]);
+    // }
+
+    // public function ubah_simpan($id, Request $request){
+    //     $user = UserModel::find($id);
+
+    //     $user->username = $request->username;
+    //     $user->nama = $request->nama;
+    //     $user->level_id = $request->level_id;
+
+    //     $user->save();
+    //     return redirect('/user');
+    // }
+
     public function ubah($id)
     {
         $user = UserModel::find($id);
-        return view('user_ubah', ['data' => $user]);
+        return view('user_ubah',['data'=>$user]);
     }
 
-    public function ubah_simpan($id, Request $request){
+
+    public function ubah_simpan(Request $request, $id)
+    {
         $user = UserModel::find($id);
 
         $user->username = $request->username;
@@ -127,6 +147,8 @@ class UserController extends Controller
         $user->save();
         return redirect('/user');
     }
+
+
 
     public function hapus($id){
         $user = UserModel::find($id);

@@ -19,13 +19,26 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+//Level Page
+Route::get('/level', [LevelController::class, 'index']); 
 
-Route::get('level', [LevelController::class, 'index']);
-Route::get('kategori', [KategoriController::class, 'index']);
-Route::get('user', [UserController::class, 'index']);
-Route::get('user/tambah', [UserController::class, 'tambah'])->name('/user/tambah');
-Route::get('user/ubah/{id}', [UserController::class, 'ubah'])->name('/user/ubah');
-Route::get('user/hapus/{id}', [UserController::class, 'hapus'])->name('/user/hapus');
+//Kategori Page
+Route::get('/kategori', [KategoriController::class, 'index']); 
+
+// User Page
 Route::get('/user', [UserController::class, 'index'])->name('/user');
-Route::post('user/tambah_simpan', [UserController::class, 'tambah_simpan'])->name('/user/tambah_simpan');
-Route::put('/user/ubah_simpan/{id}',[UserController::class,'ubah_simpan'])->name('/user/ubah_simpan');
+
+// User Tambah
+Route::get('/user/tambah',[UserController::class, 'tambah'])->name('/user/tambah');
+
+// User Ubah
+Route::get('/user/ubah/{id}',[UserController::class, 'ubah'])->name('/user/ubah');
+
+// User Hapus
+Route::get('/user/hapus/{id}',[UserController::class, 'hapus'])->name('/user/hapus');
+
+// User Simpan
+Route::post('/user/tambah_simpan',[UserController::class, 'tambah_simpan'])->name('/user/tambah_simpan');
+
+// User Tambah Simpan
+Route::put('/user/ubah_simpan/{id}', [UserController::class, 'ubah_simpan'])->name('/user/ubah_simpan');
