@@ -3,6 +3,7 @@
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,9 +17,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
 //Level Page
 Route::get('/level', [LevelController::class, 'index']); 
 
@@ -42,3 +44,6 @@ Route::post('/user/tambah_simpan',[UserController::class, 'tambah_simpan'])->nam
 
 // User Tambah Simpan
 Route::put('/user/ubah_simpan/{id}', [UserController::class, 'ubah_simpan'])->name('/user/ubah_simpan');
+
+//Welcome Controller
+Route::get('/', [WelcomeController::class, 'index']); 
