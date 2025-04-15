@@ -25,7 +25,8 @@ class UserController extends Controller
         ];
         $activeMenu = 'user';
 
-        $level = LevelModel::all(); // ambil data level untuk filter level
+        $level = LevelModel::all(); // ambil data level untuk digunakan filter level
+
         return view('user.index', ['breadcrumb' => $breadcrumb, 'page' => $page,'level' => $level, 'activeMenu' => $activeMenu]);
 
     }
@@ -75,6 +76,14 @@ class UserController extends Controller
         return view('user.create', ['breadcrumb' => $breadcrumb, 'page' => $page, 'level' => $level, 'activeMenu' => $activeMenu]);
     }
 
+    // Menampilkan halaman form tambah_ajax user
+    public function create_ajax(){
+        $level = LevelModel::select('level_id', 'level_nama')->get();
+        
+        return view('user.create_ajax')
+                ->with('level', $level);    
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -92,6 +101,39 @@ class UserController extends Controller
         ]);
 
         return redirect('/user')->with('success', 'Data user berhasil ditambahkan');
+    }
+
+    public function store_ajax(Request $request)
+    {
+        // cek apakah request berupa ajax
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'level_id' => 'required|integer',
+                'username' => 'required|string|min:3|unique:m_user,username',
+                'nama' => 'required|string|max:100',
+                'password' => 'required|min:6',
+            ];
+
+            // use Illuminate\Support\Facades\Validator;
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, // response status, false: error/gagal, true: berhasil
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors(), // pesan error validasi
+                ]);
+            }
+
+            UserModel::create($request->all());
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data user berhasil disimpan',
+            ]);
+        }
+
+        return redirect('/');
     }
 
     // menampilkan detail data user

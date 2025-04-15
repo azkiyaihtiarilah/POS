@@ -6,8 +6,8 @@
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
                 <a class="btn btn-sm btn-primary mt-1" href="{{ url('user/create') }}">Tambah</a>
-                {{-- <button onclick="modalAction('{{ url('user/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah
-                    Ajax</button> --}}
+                <button onclick="modalAction('{{ url('user/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah
+                    Ajax</button>
             </div>
         </div>
         <div class="card-body">
@@ -25,7 +25,7 @@
             @endif
             <div class="row">
                 <div class="col-12">
-                    {{-- <div class="form-group row">
+                    <div class="form-group row">
                         <label class="col-1 control-label col-form-label">Filter:</label>
                         <div class="col-3">
                             <select class="form-control" id="level_id" name="level_id" required>
@@ -36,7 +36,7 @@
                             </select>
                             <small class="form-text text-muted">Level Pengguna</small>
                         </div>
-                    </div> --}}
+                    </div>
                     <table class="table table-bordered table-striped table-hover table-sm" id="table_user">
                         <thead>
                             <tr>
@@ -78,7 +78,7 @@
                             }
                         },
                         columns: [{
-                            data: "DT_RowIndex",
+                            data: "DT_RowIndex", //nomor urut dari laravel datatable addIndexColumn()
                             className: "text-center",
                             orderable: false,
                             searchable: false
