@@ -16,9 +16,9 @@ Route::group(['prefix' => 'user'], function () {
     Route::get('/{id}',[UserController::class, 'show']);       // menampilkan detail user
     Route::get('/{id}/edit',[UserController::class, 'edit']);  // menampilkan halaman form edit user
     Route::put('/{id}',[UserController::class, 'update']);     // menyimpan perubahan data user
-    // Ajax Edit
-    Route::get('/{id}/edit_ajax',[UserController::class, 'edit_ajax']);  // menampilkan halaman form edit user
-    Route::put('/{id}/update_ajax',[UserController::class, 'update_ajax']);     // menyimpan perubahan data user
+    // Ajax Edit  
+    Route::get('/{id}/edit_ajax', [UserController::class, 'edit_ajax']); // menampilkan halaman form edit user
+    Route::put('/{id}/update_ajax', [UserController::class, 'update_ajax']); // menyimpan perubahan data user
     // Menghapus data user
     Route::delete('/{id}',[UserController::class, 'destroy']);  
     // Ajax Delete
