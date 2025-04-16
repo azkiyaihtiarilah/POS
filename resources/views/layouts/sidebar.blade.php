@@ -48,7 +48,7 @@
             <li class="nav-header">Transaction Data</li>
             <li class="nav-item">
                 <a href="{{ url('/stok') }}" class="nav-link {{ $activeMenu == 'stok' ? 'active' : '' }} ">
-                    <i class="nav-icon fa-cubes"></i>
+                    <i class="nav-icon far fa-list-alt"></i>
                     <p>Stock of Goods</p>
                 </a>
             </li>
