@@ -3,25 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\BarangModel;
-use Illuminate\Http\Request;
-use App\Models\KategoriModel;
-use Yajra\DataTables\DataTables;
+ use App\Models\KategoriModel;
+ use Illuminate\Http\Request;
+ use Yajra\DataTables\DataTables;
  use Illuminate\Support\Facades\Validator;
 
-class SalesController extends Controller
+class BarangController extends Controller
 {
     public function index()
-    {
-        $breadcrumb = (object) [
-            'title' => 'Data Barang',
-            'list'  => ['Home', 'Barang']
-        ];
-
-        $page = (object) [
-            'title' => 'Daftar barang yang terdaftar dalam sistem'
-        ];
-
-        $activeMenu = 'barang';
+     {
+         $breadcrumb = (object) [
+             'title' => 'Data Barang',
+             'list'  => ['Home', 'Barang']
+         ];
+ 
+         $page = (object) [
+             'title' => 'Daftar barang yang terdaftar dalam sistem'
+         ];
+ 
+         $activeMenu = 'barang';
  
          $kategori = KategoriModel::all();
  
@@ -36,28 +36,33 @@ class SalesController extends Controller
          if ($request->kategori_id) {
              $products->where('kategori_id', $request->kategori_id);
          }
+ 
          return DataTables::of($products)
              ->addIndexColumn() // menambahkan kolom index / no urut (default nama kolom: DT_RowIndex)
              ->addColumn('aksi', function ($barang) {
-                // menambahkan kolom aksi
-                // $btn = '<a href="' . url('/barang/' . $barang->barang_id) . '" class="btn btn-info btn-sm">Detail</a> ';
-                // $btn .= '<a href="' . url('/barang/' . $barang->barang_id . '/edit') . '" class="btn btn-warning btn-sm">Edit</a> ';
-                // $btn .= '<form class="d-inline-block" method="POST" action="' . url('/barang/' . $barang->barang_id) . '">'
-                //     . csrf_field() . method_field('DELETE') .
-                //     '<button type="submit" class="btn btn-danger btn-sm"
-                //     onclick="return confirm(\'Apakah Anda yakit menghapus data
-                //     ini?\');">Hapus</button></form>';
-                $btn = '<button onclick="modalAction(\'' . url('/barang/' . $barang->barang_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
-
-                $btn .= '<button onclick="modalAction(\'' . url('/barang/' . $barang->barang_id . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
-
-                $btn .= '<button onclick="modalAction(\'' . url('/barang/' . $barang->barang_id . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
-                return $btn;
-            })
-            ->rawColumns(['aksi']) // memberitahu bahwa kolom aksi adalah html
-            ->make(true);
-    }
-    public function create()
+                 // menambahkan kolom aksi
+                 // $btn = '<a href="' . url('/barang/' . $barang->barang_id) . '" class="btn btn-info btn-sm">Detail</a> ';
+                 // $btn .= '<a href="' . url('/barang/' . $barang->barang_id . '/edit') . '" class="btn btn-warning btn-sm">Edit</a> ';
+                 // $btn .= '<form class="d-inline-block" method="POST" action="' . url('/barang/' . $barang->barang_id) . '">'
+                 //     . csrf_field() . method_field('DELETE') .
+                 //     '<button type="submit" class="btn btn-danger btn-sm"
+                 //     onclick="return confirm(\'Apakah Anda yakit menghapus data
+                 //     ini?\');">Hapus</button></form>';
+                 $btn = '<button onclick="modalAction(\'' . url('/barang/' . $barang->barang_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+ 
+                 $btn .= '<button onclick="modalAction(\'' . url('/barang/' . $barang->barang_id . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
+ 
+                 $btn .= '<button onclick="modalAction(\'' . url('/barang/' . $barang->barang_id . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
+                 return $btn;
+             })
+             ->rawColumns(['aksi']) // memberitahu bahwa kolom aksi adalah html
+             ->make(true);
+     }
+ 
+     /**
+      * Show the form for creating a new resource.
+      */
+     public function create()
      {
          $breadcrumb = (object) [
              'title' => 'Tambah Barang',
