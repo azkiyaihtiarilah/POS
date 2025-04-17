@@ -23,6 +23,7 @@ Route::group(['prefix' => 'user'], function () {
     // Ajax Edit  
     Route::get('/{id}/edit_ajax', [UserController::class, 'edit_ajax']); // menampilkan halaman form edit user
     Route::put('/{id}/update_ajax', [UserController::class, 'update_ajax']); // menyimpan perubahan data user
+    Route::get('/{id}/show_ajax', [UserController::class, 'show_ajax']);
     // Menghapus data user
     Route::delete('/{id}',[UserController::class, 'destroy']);  
     // Ajax Delete
@@ -46,7 +47,7 @@ Route::group(['prefix' => 'kategori'], function () {
      // Ajax Edit
      Route::get('/{id}/edit_ajax', [KategoriController::class, 'edit_ajax']);
      Route::put('/{id}/update_ajax', [KategoriController::class, 'update_ajax']);
- 
+     Route::get('/{id}/show_ajax', [KategoriController::class, 'show_ajax']);
      // Ajax Delete
      Route::get('/{id}/delete_ajax', [KategoriController::class, 'confirm_ajax']);
      Route::delete('/{id}/delete_ajax', [KategoriController::class, 'delete_ajax']);
@@ -67,6 +68,7 @@ Route::group(['prefix' => 'level'], function () {
     // Ajax Update
     Route::get('/{id}/edit_ajax', [LevelController::class, 'edit_ajax']);
     Route::put('/{id}/update_ajax', [LevelController::class, 'update_ajax']);
+    Route::get('/{id}/show_ajax', [LevelController::class, 'show_ajax']);
     // Ajax Delete
     Route::get('/{id}/delete_ajax', [LevelController::class, 'confirm_ajax']);
     Route::delete('/{id}/delete_ajax', [LevelController::class, 'delete_ajax']);
@@ -88,7 +90,7 @@ Route::group(['prefix' => 'barang'], function () {
     // Ajax Edit
     Route::get('/{id}/edit_ajax', [BarangController::class, 'edit_ajax']);
     Route::put('/{id}/update_ajax', [BarangController::class, 'update_ajax']);
-
+    Route::get('/{id}/show_ajax', [BarangController::class, 'show_ajax']);
     // Ajax Delete
     Route::get('/{id}/delete_ajax', [BarangController::class, 'confirm_ajax']);
     Route::delete('/{id}/delete_ajax', [BarangController::class, 'delete_ajax']);

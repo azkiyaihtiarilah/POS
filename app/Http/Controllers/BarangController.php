@@ -162,6 +162,12 @@ class BarangController extends Controller
  
          return view('barang.show', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu, 'barang' => $barang]);
      }
+
+     public function show_ajax(string $id)
+{
+    $barang = BarangModel::with('kategori')->find($id); // pastikan relasi 'kategori' didefinisikan
+    return view('barang.show_ajax', ['barang' => $barang]);
+}
  
      /**
       * Show the form for editing the specified resource.

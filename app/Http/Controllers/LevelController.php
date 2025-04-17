@@ -139,6 +139,12 @@ class LevelController extends Controller
         return view('level.show', ['breadcrumb' => $breadcrumb, 'activeMenu' => $activeMenu, 'page' => $page, 'level' => $level]);
     }
 
+    public function show_ajax(string $id)
+    {
+        $level = LevelModel::find($id);
+        return view('level.show_ajax', ['level' => $level]);
+    }
+
     public function edit(string $id)
     {
         $level = LevelModel::find($id);
