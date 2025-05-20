@@ -13,7 +13,7 @@
              </div>
              <a href="{{ url('stok') }}" class="btn btn-sm btn-default mt-2">Kembali</a>
          @else
-             <form method="POST" action="{{ url('/stok/'.$stok->stock_id) }}" class="form-horizontal">
+             <form method="POST" action="{{ url('/stok/'.$stok->stok_id) }}" class="form-horizontal">
                  @csrf
                  @method('PUT')
  
@@ -38,8 +38,8 @@
                  <div class="form-group row">
                      <label class="col-2 col-form-label">Jumlah</label>
                      <div class="col-10">
-                         <input type="number" name="stock_jumlah" class="form-control" required value="{{ old('stock_jumlah', $stok->stock_jumlah) }}">
-                         @error('stock_jumlah')
+                         <input type="number" name="stok_jumlah" class="form-control" required value="{{ old('stok_jumlah', $stok->stok_jumlah) }}">
+                         @error('stok_jumlah')
                              <small class="form-text text-danger">{{ $message }}</small>
                          @enderror
                      </div>
@@ -49,8 +49,8 @@
                  <div class="form-group row">
                      <label class="col-2 col-form-label">Tanggal</label>
                      <div class="col-10">
-                         <input type="datetime-local" name="stock_tanggal" class="form-control" required value="{{ old('stock_tanggal', \Carbon\Carbon::parse($stok->stock_tanggal)->format('Y-m-d\TH:i')) }}">
-                         @error('stock_tanggal')
+                         <input type="datetime-local" name="stok_tanggal" class="form-control" required value="{{ old('stok_tanggal', \Carbon\Carbon::parse($stok->stok_tanggal)->format('Y-m-d\TH:i')) }}">
+                         @error('stok_tanggal')
                              <small class="form-text text-danger">{{ $message }}</small>
                          @enderror
                      </div>

@@ -40,6 +40,7 @@
         <h3 class="card-title">{{ $page->title }}</h3>
         <div class="card-tools">
             <a class="btn btn-sm btn-primary mt-1" href="{{ url('stok/create') }}">Tambah</a>
+            <button onclick="modalAction('{{ url('stok/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah Ajax</button>
         </div>
     </div>
     <div class="card-body">
@@ -57,17 +58,17 @@
                 @forelse ($stok as $item)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ \Carbon\Carbon::parse($item->stock_tanggal)->format('d-m-Y H:i') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($item->stok_tanggal)->format('d-m-Y H:i') }}</td>
                         <td>{{ $item->barang->barang_nama ?? '-' }}</td>
-                        <td>{{ $item->stock_jumlah }}</td>
+                        <td>{{ $item->stok_jumlah }}</td>
                         <td>
-                            <a href="{{ url('stok/' . $item->stock_id) }}" class="btn btn-info btn-sm">Detail</a>
-                            <a href="{{ url('stok/' . $item->stock_id . '/edit') }}" class="btn btn-warning btn-sm">Edit</a>
-                            <form action="{{ url('stok/' . $item->stock_id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus?')">
+                            <a href="{{ url('stok/' . $item->stok_id) }}" class="btn btn-info btn-sm">Detail</a>
+                            <a href="{{ url('stok/' . $item->stok_id . '/edit') }}" class="btn btn-warning btn-sm">Edit</a>
+                            <!-- <form action="{{ url('stok/' . $item->stok_id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus?')">
                                 @csrf
                                 @method('DELETE')
                                 <button class="btn btn-danger btn-sm">Hapus</button>
-                            </form>
+                            </form> -->
                         </td>
                     </tr>
                 @empty

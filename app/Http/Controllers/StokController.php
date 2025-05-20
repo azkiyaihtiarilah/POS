@@ -38,6 +38,8 @@ class StokController extends Controller
 
         $stok = $stok->get();
 
+        
+
         return view('stok.index', compact('breadcrumb', 'page', 'activeMenu', 'stok', 'kategori'));
     }
 
@@ -90,30 +92,67 @@ class StokController extends Controller
         return view('stok.create', compact('breadcrumb', 'page', 'activeMenu', 'barang', 'user'));
     }
 
+    public function create_ajax()
+    {
+        $barang = BarangModel::all();
+        $user = UserModel::all();
+        return view('stok.create_ajax', ['barang' => $barang, 'user' => $user]);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
             'barang_id' => 'required|exists:m_barang,barang_id',
             'user_id' => 'required|exists:m_user,user_id',
-            'stock_tanggal' => 'required|date',
-            'stock_jumlah' => 'required|integer',
+            'stok_tanggal' => 'required|date',//
+            'stok_jumlah' => 'required|integer',//
         ]);
 
         $stok = StokModel::where('barang_id', $request->barang_id)->first();
 
     if ($stok) {
-        $stok->stock_jumlah += $request->stock_jumlah;
+        $stok->stok_jumlah += $request->stok_jumlah;
         $stok->save();
     } else {
         StokModel::create([
             'barang_id' => $request->barang_id,
             'user_id' => $request->user_id,
-            'stock_jumlah' => $request->stock_jumlah,
-            'stock_tanggal' => $request->stock_tanggal,
+            'stok_jumlah' => $request->stok_jumlah,
+            'stok_tanggal' => $request->stok_tanggal,
         ]);
     }
 
         return redirect('/stok')->with('success', 'Data stok berhasil ditambahkan.');
+    }
+
+    public function store_ajax(Request $request)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'barang_id' => 'required|integer',
+                'user_id' => 'required|integer',
+                'stok_tanggal' => 'required|date',
+                'stok_jumlah' => 'required|integer'
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validation failed!',
+                    'msgField' => $validator->errors()
+                ]);
+            }
+
+            StokModel::create($request->all());
+
+            return response()->json([
+                'status' => true,
+                'message' => 'New stock data saved successfully!'
+            ]);
+        }
+        return redirect('/');
     }
 
     
@@ -133,6 +172,12 @@ class StokController extends Controller
         $activeMenu = 'Stok';
 
         return view('stok.show', compact('breadcrumb', 'page', 'activeMenu', 'stok'));
+    }
+
+    public function show_ajax(string $id)
+    {
+        $stok = StokModel::with(['barang', 'user'])->find($id);
+        return view('stok.show_ajax', compact('stok'));
     }
 
     public function edit($id)
@@ -155,24 +200,101 @@ class StokController extends Controller
         return view('stok.edit', compact('breadcrumb', 'page', 'activeMenu', 'stok', 'barang', 'user'));
     }
 
-    
+    public function edit_ajax(string $id)
+    {
+        $stok = StokModel::find($id);
+        $barang = BarangModel::all();
+        $user = UserModel::all();
+        return view('stok.edit_ajax', ['stok' => $stok, 'barang' => $barang, 'user' => $user]);
+    }
+
     public function update(Request $request, $id)
     {
         $request->validate([
             'barang_id' => 'required|exists:m_barang,barang_id',
-            'stock_tanggal' => 'required|date',
-            'stock_jumlah' => 'required|integer',
+            'stok_tanggal' => 'required|date',
+            'stok_jumlah' => 'required|integer',
         ]);
 
         $stok = StokModel::findOrFail($id);
 
         //edit ganti stock
         $stok->barang_id = $request->barang_id;
-        $stok->stock_tanggal = $request->stock_tanggal;
-        $stok->stock_jumlah = $request->stock_jumlah;
+        $stok->stok_tanggal = $request->stok_tanggal;
+        $stok->stok_jumlah = $request->stok_jumlah;
         $stok->save();
 
         return redirect('/stok')->with('success', 'Stok berhasil diperbarui.');
+    }
+
+    public function update_ajax(Request $request, $id)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'barang_id' => 'required|integer',
+                'user_id' => 'required|integer',
+                'stok_tanggal' => 'required|date',
+                'stok_jumlah' => 'required|integer'
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validation failed!',
+                    'msgField' => $validator->errors()
+                ]);
+            }
+
+            $stok = StokModel::find($id);
+            if ($stok) {
+                $stok->update($request->all());
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Stock data updated successfully!'
+                ]);
+            }
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Stock data not found!'
+            ]);
+        }
+        return redirect('/');
+    }
+
+    public function confirm_ajax(string $id)
+    {
+        $stok = StokModel::find($id);
+        return view('stok.confirm_ajax', ['stok' => $stok]);
+    }
+
+    public function delete_ajax(Request $request, $id)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $stok = StokModel::find($id);
+            if ($stok) {
+                try {
+                    StokModel::destroy($id);
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Stock data deleted successfully!'
+                    ]);
+                } catch (\Illuminate\Database\QueryException $e) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Stock data fails to be deleted because it is still related to other data'
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Stock data not found!'
+                ]);
+            }
+        }
+        return redirect('/');
     }
 
     public function destroy($id)
@@ -191,4 +313,5 @@ class StokController extends Controller
         }
     }
 
+    
 }

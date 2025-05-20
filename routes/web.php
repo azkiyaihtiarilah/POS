@@ -118,8 +118,8 @@ Route::group(['prefix' => 'stok'], function () {
     Route::put('/{id}', [StokController::class, 'update'])->name('stok.update');
     Route::delete('/{id}', [StokController::class, 'destroy'])->name('stok.destroy');
     // Ajax
-    // Route::get('/stok/{id}/show_ajax', [StokController::class, 'show_ajax']);
-    // Route::get('/stok/{id}/edit_ajax', [StokController::class, 'edit_ajax']);
+    Route::get('/stok/{id}/show_ajax', [StokController::class, 'show_ajax']);
+    Route::get('/stok/{id}/edit_ajax', [StokController::class, 'edit_ajax']);
     Route::get('/stok/create_ajax', [StokController::class, 'create_ajax']);
-    // Route::delete('/stok/{id}/delete_ajax', [StokController::class, 'delete_ajax']);
+    Route::delete('/stok/{id}/delete_ajax', [StokController::class, 'delete_ajax']);
 });

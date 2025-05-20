@@ -16,11 +16,11 @@
              <table class="table table-bordered table-striped table-hover table-sm">
                  <tr>
                      <th>ID</th>
-                     <td>{{ $stok->stock_id }}</td>
+                     <td>{{ $stok->stok_id }}</td>
                  </tr>
                  <tr>
                      <th>Tanggal</th>
-                     <td>{{ $stok->stock_tanggal }}</td>
+                     <td>{{ $stok->stok_tanggal }}</td>
                  </tr>
                  <tr>
                      <th>Barang</th>
@@ -32,7 +32,7 @@
                  </tr>
                  <tr>
                      <th>Jumlah</th>
-                     <td>{{ $stok->stock_jumlah }}</td>
+                     <td>{{ $stok->stok_jumlah }}</td>
                  </tr>
                  <tr>
                      <th>User Input</th>
