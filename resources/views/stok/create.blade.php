@@ -30,8 +30,8 @@
              <div class="form-group row">
                  <label class="col-2 col-form-label">Jumlah</label>
                  <div class="col-10">
-                     <input type="number" name="stock_jumlah" class="form-control" required value="{{ old('stock_jumlah') }}">
-                     @error('stock_jumlah')
+                     <input type="number" name="stok_jumlah" class="form-control" required value="{{ old('stok_jumlah') }}">
+                     @error('stok_jumlah')
                          <small class="form-text text-danger">{{ $message }}</small>
                      @enderror
                  </div>
@@ -41,8 +41,8 @@
              <div class="form-group row">
                  <label class="col-2 col-form-label">Tanggal</label>
                  <div class="col-10">
-                     <input type="datetime-local" name="stock_tanggal" class="form-control" required value="{{ old('stock_tanggal') }}">
-                     @error('stock_tanggal')
+                     <input type="datetime-local" name="stok_tanggal" class="form-control" required value="{{ old('stok_tanggal') }}">
+                     @error('stok_tanggal')
                          <small class="form-text text-danger">{{ $message }}</small>
                      @enderror
                  </div>

@@ -78,4 +78,79 @@
         </table>
     </div>
 </div>
+     <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data- backdrop="static"
+         data-keyboard="false" data-width="75%" aria-hidden="true"></div>
 @endsection
+ @push('css')
+ @endpush
+ 
+ @push('js')
+     <script>
+         function modalAction(url = '') {
+             $('#myModal').load(url, function() {
+                 $('#myModal').modal('show');
+             });
+         }
+        //  $(document).ready(function() {
+        //      var dataBarang = $('#table_barang').DataTable({
+        //          serverSide: true, // serverSide: true, jika ingin menggunakan server side processing
+        //          ajax: {
+        //              "url": "{{ url('barang/list') }}",
+        //              "dataType": "json",
+        //              "type": "POST",
+        //              "data": function (d) {
+        //                  d.kategori_id = $('#kategori_id').val();
+        //              }
+        //          },
+        //          columns: [
+        //              {
+        //                  data: "DT_RowIndex", // nomor urut dari laravel datatable addIndexColumn()
+        //                  className: "text-center",
+        //                  orderable: false,
+        //                  searchable: false
+        //              },
+        //              {
+        //                  data: "barang_kode",
+        //                  className: "",
+        //                  orderable: true, // orderable: true, jika ingin kolom ini bisa diurutkan
+        //                  searchable: true // searchable: true, jika ingin kolom ini bisa dicari
+        //              },
+        //              {
+        //                  data: "barang_nama",
+        //                  className: "",
+        //                  orderable: true, // orderable: true, jika ingin kolom ini bisa diurutkan
+        //                  searchable: true // searchable: true, jika ingin kolom ini bisa dicari
+        //              },
+        //              {
+        //                  data: "kategori.kategori_nama",
+        //                  className: "",
+        //                  orderable: true, // orderable: true, jika ingin kolom ini bisa diurutkan
+        //                  searchable: true // searchable: true, jika ingin kolom ini bisa dicari
+        //              },
+        //              {
+        //                  data: "harga_beli",
+        //                  className: "",
+        //                  orderable: true, // orderable: true, jika ingin kolom ini bisa diurutkan
+        //                  searchable: true // searchable: true, jika ingin kolom ini bisa dicari
+        //              },
+        //              {
+        //                  data: "harga_jual",
+        //                  className: "",
+        //                  orderable: true, // orderable: true, jika ingin kolom ini bisa diurutkan
+        //                  searchable: true // searchable: true, jika ingin kolom ini bisa dicari
+        //              },
+        //              {
+        //                  data: "aksi",
+        //                  className: "",
+        //                  orderable: false, // orderable: true, jika ingin kolom ini bisa diurutkan
+        //                  searchable: false // searchable: true, jika ingin kolom ini bisa dicari
+        //              }
+        //          ]
+        //      });
+ 
+        //      $('#kategori_id').on('change', function() {
+        //          dataBarang.ajax.reload();
+        //      });
+        //  });
+     </script>
+ @endpush

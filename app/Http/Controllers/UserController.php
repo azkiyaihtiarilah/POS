@@ -97,6 +97,39 @@ class UserController extends Controller
         return redirect('/user')->with('success', 'Data user berhasil ditambahkan');
     }
 
+    // public function store_ajax(Request $request)
+    // {
+    //     // cek apakah request berupa ajax
+    //     if ($request->ajax() || $request->wantsJson()) {
+    //         $rules = [
+    //             'level_id' => 'required|integer',
+    //             'username' => 'required|string|min:3|unique:m_user,username',
+    //             'nama' => 'required|string|max:100',
+    //             'password' => 'required|min:6',
+    //         ];
+
+    //         // use Illuminate\Support\Facades\Validator;
+    //         $validator = Validator::make($request->all(), $rules);
+
+    //         if ($validator->fails()) {
+    //             return response()->json([
+    //                 'status' => false, // response status, false: error/gagal, true: berhasil
+    //                 'message' => 'Validasi Gagal',
+    //                 'msgField' => $validator->errors(), // pesan error validasi
+    //             ]);
+    //         }
+
+    //         UserModel::create($request->all());
+
+    //         return response()->json([
+    //             'status' => true,
+    //             'message' => 'Data user berhasil disimpan',
+    //         ]);
+    //     }
+
+    //     return redirect('/');
+    // }
+
     public function store_ajax(Request $request)
     {
         // cek apakah request berupa ajax
@@ -108,18 +141,21 @@ class UserController extends Controller
                 'password' => 'required|min:6',
             ];
 
-            // use Illuminate\Support\Facades\Validator;
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
                 return response()->json([
-                    'status' => false, // response status, false: error/gagal, true: berhasil
+                    'status' => false,
                     'message' => 'Validasi Gagal',
-                    'msgField' => $validator->errors(), // pesan error validasi
+                    'msgField' => $validator->errors(),
                 ]);
             }
 
-            UserModel::create($request->all());
+            // Hash password sebelum insert
+            $data = $request->all();
+            $data['password'] = bcrypt($request->password);
+
+            UserModel::create($data);
 
             return response()->json([
                 'status' => true,
@@ -129,6 +165,7 @@ class UserController extends Controller
 
         return redirect('/');
     }
+
 
     // menampilkan detail data user
     public function show($id)
