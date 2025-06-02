@@ -157,5 +157,6 @@ Route::middleware(['authorize:ADM, MNG'])->group(function () {
     // Import
     Route::get('/import', [StokController::class, 'import']);
     Route::post('/import_ajax', [StokController::class, 'import_ajax']);
+    Route::get('/export-excel', [StokController::class, 'export_excel']);
     });
 });

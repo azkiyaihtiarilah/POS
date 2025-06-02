@@ -9,6 +9,7 @@ use App\Models\StokModel;
 use App\Models\UserModel;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class StokController extends Controller
 {
@@ -100,56 +101,86 @@ class StokController extends Controller
     }
 
     public function store(Request $request)
-{
-    $request->validate([
-        'barang_id'      => 'required|exists:m_barang,barang_id',
-        'stock_jumlah'   => 'required|integer|min:1',
-        'stock_tanggal'  => 'required|date',
-        'user_id'        => 'required|exists:m_user,user_id',
-    ]);
-
-    // Simpan data
-    StokModel::create([
-        'barang_id'     => $request->barang_id,
-        'stok_jumlah'  => $request->stock_jumlah,
-        'stok_tanggal' => $request->stock_tanggal,
-        'user_id'       => $request->user_id,
-    ]);
-
-    return redirect('stok')->with('success', 'Data stok berhasil disimpan');
-}
+    {
+        // Validasi input data
+        $request->validate([
+            'barang_id'     => 'required|exists:m_barang,barang_id',   // Validasi barang_id
+            'stok_jumlah'   => 'required|integer|min:1',               // Validasi stok_jumlah
+            'stok_tanggal'  => 'required|date',                         // Validasi stok_tanggal
+            'user_id'       => 'required|exists:m_user,user_id',        // Validasi user_id
+        ]);
+    
+        try {
+            // Simpan data stok
+            StokModel::create([
+                'barang_id'    => $request->barang_id,
+                'stok_jumlah'  => $request->stok_jumlah,  // Pastikan nama field sesuai
+                'stok_tanggal' => $request->stok_tanggal, // Pastikan nama field sesuai
+                'user_id'      => $request->user_id,
+            ]);
+    
+            // Redirect dengan pesan sukses
+            return redirect('stok')->with('success', 'Data stok berhasil disimpan');
+            
+        } catch (\Exception $e) {
+            // Jika terjadi error
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+    
 
 
     public function store_ajax(Request $request)
     {
+        // Pastikan permintaan adalah AJAX atau JSON
         if ($request->ajax() || $request->wantsJson()) {
+            
+            // Aturan validasi untuk data yang masuk
             $rules = [
-                'barang_id' => 'required|integer',
-                'user_id' => 'required|integer',
+                'barang_id'    => 'required|integer|exists:m_barang,barang_id',
+                'user_id'      => 'required|integer|exists:m_user,user_id',
                 'stok_tanggal' => 'required|date',
-                'stok_jumlah' => 'required|integer'
+                'stok_jumlah'  => 'required|integer|min:1',
             ];
 
+            // Lakukan validasi
             $validator = Validator::make($request->all(), $rules);
 
+            // Jika validasi gagal
             if ($validator->fails()) {
                 return response()->json([
-                    'status' => false,
-                    'message' => 'Validation failed!',
-                    'msgField' => $validator->errors()
+                    'status'    => false,
+                    'message'   => 'Validation failed!',
+                    'msgField'  => $validator->errors(),
                 ]);
             }
 
-            StokModel::create($request->all());
+            try {
+                // Simpan data stok ke dalam database
+                StokModel::create([
+                    'barang_id'    => $request->barang_id,
+                    'user_id'      => $request->user_id,
+                    'stok_tanggal' => $request->stok_tanggal,
+                    'stok_jumlah'  => $request->stok_jumlah,
+                ]);
 
-            return response()->json([
-                'status' => true,
-                'message' => 'New stock data saved successfully!'
-            ]);
+                // Mengembalikan response sukses
+                return response()->json([
+                    'status'  => true,
+                    'message' => 'New stock data saved successfully!',
+                ]);
+            } catch (\Exception $e) {
+                // Jika terjadi kesalahan
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Failed to save data: ' . $e->getMessage(),
+                ]);
+            }
         }
+
+        // Jika bukan permintaan AJAX atau JSON
         return redirect('/');
     }
-
     
     public function show($id)
     {
@@ -308,5 +339,102 @@ class StokController extends Controller
         }
     }
 
+    public function import()
+    {
+        $breadcrumb = (object)[
+            'title' => 'Import Stok',
+            'list' => ['Home', 'Stok', 'Import']
+        ];
+
+        $page = (object)[
+            'title' => 'Form Import Stok'
+        ];
+
+        $activeMenu = 'Stok';
+
+        return view('stok.import', compact('breadcrumb', 'page', 'activeMenu'));
+    }
+    public function import_ajax(Request $request)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            // Validasi file yang diunggah
+            $request->validate([
+                'file' => 'required|file|mimes:xlsx,csv,xls',
+            ]);
+
+            try {
+                // Proses import file
+                // Implementasikan logika import sesuai kebutuhan Anda
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'File imported successfully!'
+                ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Failed to import file: ' . $e->getMessage()
+                ]);
+            }
+        }
+
+        return redirect('/stok');
+    }
+    public function export_excel()
+{
+    // Ambil data stok yang sudah ada
+    $stok = StokModel::with('barang')->get();
+
+    // Buat objek spreadsheet baru
+    $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    // Menambahkan header kolom
+    $sheet->setCellValue('A1', 'No');
+    $sheet->setCellValue('B1', 'Tanggal Stok');
+    $sheet->setCellValue('C1', 'Nama Barang');
+    $sheet->setCellValue('D1', 'Jumlah Stok');
+
+    // Menambahkan format font tebal pada header
+    $sheet->getStyle('A1:D1')->getFont()->setBold(true);
+
+    // Menyusun data stok
+    $no = 1;
+    $baris = 2;
+    foreach ($stok as $item) {
+        $sheet->setCellValue('A' . $baris, $no);
+        $sheet->setCellValue('B' . $baris, \Carbon\Carbon::parse($item->stok_tanggal)->format('d-m-Y H:i'));
+        $sheet->setCellValue('C' . $baris, $item->barang->barang_nama ?? '-');
+        $sheet->setCellValue('D' . $baris, $item->stok_jumlah);
+        $baris++;
+        $no++;
+    }
+
+    // Set lebar kolom secara otomatis
+    foreach (range('A', 'D') as $columnID) {
+        $spreadsheet->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(true);
+    }
+
+    // Memberikan judul pada sheet
+    $sheet->setTitle('Data Stok');
+    
+    // Menyimpan file dengan format Excel
+    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+    $filename = 'Data Stok ' . date('Y-m-d H:i:s') . '.xlsx';
+
+    // Menyiapkan header untuk download file Excel
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment;filename="' . $filename . '"');
+    header('Cache-Control: max-age=0');
+    header('Cache-Control: max-age=1');
+    header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+    header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+    header('Cache-Control: cache, must-revalidate');
+    header('Pragma: no-cache');
+    
+    // Menyimpan file ke output untuk di-download
+    $writer->save('php://output');
+    exit;
+}
     
 }
