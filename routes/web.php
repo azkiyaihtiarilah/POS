@@ -126,6 +126,9 @@ Route::middleware(['authorize:ADM, MNG'])->group(function () {
         //import
         Route::get('/import', [BarangController::class, 'import']);
         Route::post('/import_ajax', [BarangController::class, 'import_ajax']);
+        
+        // Export
+        Route::get('/export_excel', [BarangController::class, 'export_excel']);
     });
 });
 
