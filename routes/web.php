@@ -136,6 +136,9 @@ Route::middleware(['authorize:ADM, MNG'])->group(function () {
         
         // Export
         Route::get('/export_excel', [BarangController::class, 'export_excel']);
+
+        // Export PDF
+        Route::get('/export_pdf', [BarangController::class, 'export_pdf']);
     });
 });
 
