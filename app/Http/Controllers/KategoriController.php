@@ -6,6 +6,7 @@ use App\Models\BarangModel;
 use App\Models\KategoriModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Yajra\DataTables\Facades\DataTables;
  use Illuminate\Support\Facades\Validator;
 
@@ -260,4 +261,52 @@ class KategoriController extends Controller
              return redirect('/kategori')->with('error', 'Data kategori gagal dihapus karena masih terdapat tabel lain yang terkait dengan data ini');
          }
      }
+
+    public function import()
+    {
+        return view('kategori.import');
+    }
+
+    public function import_ajax(Request $request)
+    {
+        $rules = [
+            'file_kategori' => ['required', 'mimes:xlsx,xls', 'max:1024'],
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validasi Gagal',
+                'msgField' => $validator->errors(),
+            ]);
+        }
+
+        $file = $request->file('file_kategori');
+        $spreadsheet = IOFactory::load($file->getRealPath());
+        $sheet = $spreadsheet->getActiveSheet();
+        $rows = $sheet->toArray();
+
+        $insert = [];
+        $header = array_shift($rows); // Ambil header
+
+        foreach ($rows as $row) {
+            if (!empty($row[0])) {
+                $insert[] = [
+                    'kategori_kode' => $row[0],
+                    'kategori_nama' => $row[1],
+                    'created_at' => now()
+                ];
+            }
+        }
+
+        if (!empty($insert)) {
+            KategoriModel::insert($insert);
+            return redirect('/kategori')->with('success', 'Data kategori berhasil diimport: ' . count($insert) . ' record');
+        } else {
+            return redirect('/kategori')->with('error', 'Data kategori kosong');
+        }
+    }
 }
+

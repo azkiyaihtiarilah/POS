@@ -40,6 +40,9 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/{id}/delete_ajax', [UserController::class, 'confirm_ajax']);
             Route::delete('/{id}/delete_ajax', [UserController::class, 'delete_ajax']);
             Route::delete('/{id}', [UserController::class, 'destroy']);
+            // Import
+            Route::get('/import', [UserController::class, 'import']);
+            Route::post('/import_ajax', [UserController::class, 'import_ajax']);
         });
     });
 });
@@ -65,6 +68,10 @@ Route::middleware(['authorize:ADM, MNG'])->group(function () {
         Route::get('/{id}/delete_ajax', [KategoriController::class, 'confirm_ajax']);
         Route::delete('/{id}/delete_ajax', [KategoriController::class, 'delete_ajax']);
         Route::delete('/{id}', [KategoriController::class, 'destroy']);
+
+        // Import
+        Route::get('/import', [KategoriController::class, 'import']);
+        Route::post('/import_ajax', [KategoriController::class, 'import_ajax']);
     });
 });
 
@@ -87,7 +94,10 @@ Route::middleware(['authorize:ADM'])->group(function () {
         // Ajax Delete
         Route::get('/{id}/delete_ajax', [LevelController::class, 'confirm_ajax']);
         Route::delete('/{id}/delete_ajax', [LevelController::class, 'delete_ajax']);
-        Route::delete('/{id}', [LevelController::class, 'destroy']);                
+        Route::delete('/{id}', [LevelController::class, 'destroy']);    
+        // Import
+        Route::get('/import', [LevelController::class, 'import']);
+        Route::post('/import_ajax', [LevelController::class, 'import_ajax']);            
     });
 });
 
@@ -134,5 +144,8 @@ Route::middleware(['authorize:ADM, MNG'])->group(function () {
     Route::get('/create_ajax', [StokController::class, 'create_ajax'])->name('create.ajax');
     Route::post('/ajax', [StokController::class, 'store_ajax']);
     Route::delete('/{id}/delete_ajax', [StokController::class, 'delete_ajax']);
+    // Import
+    Route::get('/import', [StokController::class, 'import']);
+    Route::post('/import_ajax', [StokController::class, 'import_ajax']);
     });
 });
