@@ -14,7 +14,7 @@ class UserModel extends Authenticatable
 
     protected $table = 'm_user'; //mendefinisikan namàtabel yang digunakan model ini
     protected $primaryKey = 'user_id'; //mendefinisikan primary key dari tabel yang digunakan
-    protected $fillable = ['level_id', 'username', 'nama', 'password', 'created_at', 'updated_at'];
+    protected $fillable = ['level_id', 'username', 'avatar', 'nama', 'password', 'created_at', 'updated_at'];
 
     protected $hidden = ['password'];
     protected $casts = ['password' => 'hashed'];
@@ -37,5 +37,13 @@ class UserModel extends Authenticatable
     public function getRole()
     {
         return $this->level->level_kode;
+    }
+
+    public function getAvatarUrlAttribute()
+    {
+        if ($this->avatar) {
+            return asset($this->avatar); // Langsung dari public
+        }
+        return asset('images/default-avatar.png');
     }
 }

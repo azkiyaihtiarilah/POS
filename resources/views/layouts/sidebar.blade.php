@@ -1,4 +1,17 @@
 <div class="sidebar">
+    <!-- Sidebar user panel (optional) -->
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="image">
+            <img src="{{ auth()->user()->avatar_url }}" class="img-circle elevation-2" style="width: 36px; height: 36px;" alt="User Image">
+        </div>
+        <div class="info">
+            <a href="" class="d-block">
+                @auth
+                    {{ auth()->user()->nama }}
+                @endauth
+            </a>
+        </div>
+    </div>
     <!-- SidebarSearch Form -->
     <div class="form-inline mt-2">
         <div class="input-group" data-widget="sidebar-search">
@@ -56,6 +69,13 @@
                 <a href="{{ url('/barang') }}" class="nav-link {{ $activeMenu == 'penjualan' ? 'active' : '' }} ">
                     <i class="nav-icon fas fa-cash-register"></i>
                     <p>Sales Transactions</p>
+                </a>
+            </li>
+            <li class="nav-header">Pengaturan</li>
+            <li class="nav-item">
+                <a href="{{ url('/profile') }}" class="nav-link {{ $activeMenu == 'profile' ? 'active' : '' }} ">
+                    <i class="nav-icon fa-solid fa-user-gear"></i>
+                    <p>Profile Setting</p>
                 </a>
             </li>
             <li class="nav-item">

@@ -1,13 +1,15 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LevelController;
+use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\StokController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WelcomeController;
-use Illuminate\Support\Facades\Route;
+
 
 Route::pattern('id', '[0-9]+'); //parameter (id) harus berupa angka
 
@@ -170,5 +172,13 @@ Route::middleware(['authorize:ADM, MNG'])->group(function () {
     // Export
     Route::get('/export_pdf', [StokController::class, 'export_pdf']);
     Route::get('/export-excel', [StokController::class, 'export_excel']);
+    });
+});
+
+Route::middleware(['auth', 'authorize:ADM,MGR,STF'])->group(function () {
+    Route::group(['prefix' => 'profile'], function () {
+        Route::get('/', [ProfileController::class, 'index']);
+        Route::put('/update/{id}', [ProfileController::class, 'update']);
+        Route::post('/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar');
     });
 });
