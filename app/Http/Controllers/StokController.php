@@ -7,6 +7,7 @@ use App\Models\BarangModel;
 use App\Models\KategoriModel;
 use App\Models\StokModel;
 use App\Models\UserModel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -381,60 +382,77 @@ class StokController extends Controller
         return redirect('/stok');
     }
     public function export_excel()
-{
-    // Ambil data stok yang sudah ada
-    $stok = StokModel::with('barang')->get();
+    {
+        // Ambil data stok yang sudah ada
+        $stok = StokModel::with('barang')->get();
 
-    // Buat objek spreadsheet baru
-    $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-    $sheet = $spreadsheet->getActiveSheet();
+        // Buat objek spreadsheet baru
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
 
-    // Menambahkan header kolom
-    $sheet->setCellValue('A1', 'No');
-    $sheet->setCellValue('B1', 'Tanggal Stok');
-    $sheet->setCellValue('C1', 'Nama Barang');
-    $sheet->setCellValue('D1', 'Jumlah Stok');
+        // Menambahkan header kolom
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Tanggal Stok');
+        $sheet->setCellValue('C1', 'Nama Barang');
+        $sheet->setCellValue('D1', 'Jumlah Stok');
 
-    // Menambahkan format font tebal pada header
-    $sheet->getStyle('A1:D1')->getFont()->setBold(true);
+        // Menambahkan format font tebal pada header
+        $sheet->getStyle('A1:D1')->getFont()->setBold(true);
 
-    // Menyusun data stok
-    $no = 1;
-    $baris = 2;
-    foreach ($stok as $item) {
-        $sheet->setCellValue('A' . $baris, $no);
-        $sheet->setCellValue('B' . $baris, \Carbon\Carbon::parse($item->stok_tanggal)->format('d-m-Y H:i'));
-        $sheet->setCellValue('C' . $baris, $item->barang->barang_nama ?? '-');
-        $sheet->setCellValue('D' . $baris, $item->stok_jumlah);
-        $baris++;
-        $no++;
+        // Menyusun data stok
+        $no = 1;
+        $baris = 2;
+        foreach ($stok as $item) {
+            $sheet->setCellValue('A' . $baris, $no);
+            $sheet->setCellValue('B' . $baris, \Carbon\Carbon::parse($item->stok_tanggal)->format('d-m-Y H:i'));
+            $sheet->setCellValue('C' . $baris, $item->barang->barang_nama ?? '-');
+            $sheet->setCellValue('D' . $baris, $item->stok_jumlah);
+            $baris++;
+            $no++;
+        }
+
+        // Set lebar kolom secara otomatis
+        foreach (range('A', 'D') as $columnID) {
+            $spreadsheet->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        // Memberikan judul pada sheet
+        $sheet->setTitle('Data Stok');
+        
+        // Menyimpan file dengan format Excel
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $filename = 'Data Stok ' . date('Y-m-d H:i:s') . '.xlsx';
+
+        // Menyiapkan header untuk download file Excel
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        header('Cache-Control: max-age=1');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('Cache-Control: cache, must-revalidate');
+        header('Pragma: no-cache');
+        
+        // Menyimpan file ke output untuk di-download
+        $writer->save('php://output');
+        exit;
     }
 
-    // Set lebar kolom secara otomatis
-    foreach (range('A', 'D') as $columnID) {
-        $spreadsheet->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(true);
+    public function export_pdf()
+    {
+        // Ambil data stok yang sudah ada, termasuk barang yang terkait
+        // Pastikan kita memanggil relasi barang dan kategori dengan benar
+        $stok = StokModel::with('barang', 'barang.kategori')->get();
+
+        // Menggunakan view untuk menghasilkan tampilan PDF
+        $pdf = Pdf::loadView('stok.export_pdf', ['stok' => $stok]);
+
+        // Set paper A4 dan orientasi portrait
+        $pdf->setPaper('A4', 'portrait');
+        $pdf->setOption("isHtml5ParserEnabled", true); // Pastikan HTML5 parser diaktifkan
+        $pdf->render();
+
+        // Mengunduh file PDF
+        return $pdf->stream('Data Stok ' . date('D, d M Y H:i:s') . '.pdf');
     }
-
-    // Memberikan judul pada sheet
-    $sheet->setTitle('Data Stok');
-    
-    // Menyimpan file dengan format Excel
-    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-    $filename = 'Data Stok ' . date('Y-m-d H:i:s') . '.xlsx';
-
-    // Menyiapkan header untuk download file Excel
-    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment;filename="' . $filename . '"');
-    header('Cache-Control: max-age=0');
-    header('Cache-Control: max-age=1');
-    header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-    header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-    header('Cache-Control: cache, must-revalidate');
-    header('Pragma: no-cache');
-    
-    // Menyimpan file ke output untuk di-download
-    $writer->save('php://output');
-    exit;
-}
-    
 }
