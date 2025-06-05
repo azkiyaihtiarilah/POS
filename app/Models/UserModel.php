@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -35,6 +36,13 @@ class UserModel extends Authenticatable implements JWTSubject
         return $this->belongsTo(LevelModel::class, 'level_id', 'level_id');
     }
 
+    protected function avatar(): Attribute
+    {
+        return Attribute::make(
+            get: fn($avatar) => url('/public/avatars/' . $avatar),
+        );
+    }
+
     public function getRoleName(): string
     {
         return $this->level->level_nama;
@@ -53,7 +61,7 @@ class UserModel extends Authenticatable implements JWTSubject
     public function getAvatarUrlAttribute()
     {
         if ($this->avatar) {
-            return asset($this->avatar); // Langsung dari public
+            return asset($this->avatar); 
         }
         return asset('images/default-avatar.png');
     }
